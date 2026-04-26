@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String       @id @default(uuid())
+  name          String
+  email         String       @unique
+  role          String       @default("AMBASSADOR") // ADMIN or AMBASSADOR
+  points        Int          @default(0)
+  level         Int          @default(1)
+  streak        Int          @default(0)
+  lastLoginDate DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  submissions   Submission[]
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  points      Int          @default(10)
+  type        String       @default("CONTENT") // REFERRAL, PROMOTION, CONTENT
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  submissions Submission[]
+}
+
+model Submission {
+  id          String   @id @default(uuid())
+  proofUrl    String
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  submittedAt DateTime @default(now())
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id])
+}

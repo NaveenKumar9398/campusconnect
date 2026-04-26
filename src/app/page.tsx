@@ -1,66 +1,49 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Run seed automatically
+    fetch('/api/seed').then(() => setLoading(false));
+  }, []);
+
+  const loginAsAdmin = () => {
+    localStorage.setItem('role', 'ADMIN');
+    router.push('/admin');
+  };
+
+  const loginAsAmbassador = () => {
+    localStorage.setItem('role', 'AMBASSADOR');
+    router.push('/ambassador');
+  };
+
+  if (loading) return <div className="container">Loading CampusConnect...</div>;
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="container" style={{ textAlign: 'center', marginTop: '10vh' }}>
+      <h1 style={{ fontSize: '3rem', marginBottom: '1rem', color: 'var(--primary)' }}>CampusConnect</h1>
+      <p style={{ fontSize: '1.2rem', marginBottom: '3rem', color: '#94a3b8' }}>
+        The Centralized Campus Ambassador Management Platform
+      </p>
+
+      <div className="grid" style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <div className="card">
+          <h2 className="mb-4">Admin Portal</h2>
+          <p className="mb-4" style={{ color: '#94a3b8' }}>Manage cohorts, create tasks, and approve submissions.</p>
+          <button onClick={loginAsAdmin} style={{ width: '100%' }}>Login as Admin</button>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="card">
+          <h2 className="mb-4">Ambassador Portal</h2>
+          <p className="mb-4" style={{ color: '#94a3b8' }}>Complete tasks, climb the leaderboard, and earn rewards.</p>
+          <button onClick={loginAsAmbassador} style={{ width: '100%', backgroundColor: 'var(--success)' }}>Login as Ambassador</button>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
